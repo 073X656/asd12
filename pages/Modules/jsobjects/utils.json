@@ -1,0 +1,29 @@
+{
+  "unpublishedCollection": {
+    "name": "utils",
+    "pageId": "Modules",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "actions": [],
+    "archivedActions": [],
+    "body": "export default {\n\tgetModules: async () => {\n\t\tconst modules = await fetchModules.run();\n\n\t\treturn modules.map(m => {\n\t\t\treturn {\n\t\t\t\tId: m.id,\n\t\t\t\tName: m.name,\n\t\t\t\tDuration: m.duration,\n\t\t\t\tDescription: m.description,\n\t\t\t\tCourseId: m.course_id,\n\t\t\t\tSubjectId: m.course_subject_id,\n\t\t\t}\n\t\t})\n\t},\n\n\tactiveModule: {},\n\tactiveModuleContent: {},\n\tmarkComplete: null,\n\n\tsetMarkComplete: (markComplete) => {\n\t\tthis.markComplete = markComplete;\n\t},\n\n\tsetActiveModule: (activeModule) => {\n\t\tthis.activeModule = activeModule\n\t},\n\n\tsetActiveModuleContent: async (activeModuleContent) => {\n\t\tconst contentType = activeModuleContent.type;\n\t\tlet content;\n\n\t\tconst moduleContent = await fetchOneCourseModuleContent.run({\n\t\t\tid: activeModuleContent.id\n\t\t});\n\n\t\tif (contentType === 'Reading Material') {\n\t\t\tcontent = await fetchReadingContent.run({id: activeModuleContent.id});\n\t\t}\n\t\tif (contentType === 'Video') {\n\t\t\tcontent = await fetchVideoContent.run({id: activeModuleContent.id});\n\t\t}\n\t\tif (contentType === 'Quiz') {\n\t\t\tconst quiz = await fetchQuizContent.run({id: activeModuleContent.id});\n\t\t\tconst quizQuestions = await fetchQuizQuestions.run({quizId: quiz[0].id});\n\t\t\tcontent = [{\n\t\t\t\t...quiz[0],\n\t\t\t\tquestions: quizQuestions\n\t\t\t}]\n\t\t}\n\t\tthis.activeModuleContent = {\n\t\t\tactiveModuleContent: moduleContent && moduleContent.length > 0 ? moduleContent.map(c => {\n\t\t\t\treturn {\n\t\t\t\t\tid: c.id,\n\t\t\t\t\ttype: c.content_type,\n\t\t\t\t\tname: c.title,\n\t\t\t\t\tmarkComplete: c.mark_complete,\n\t\t\t\t\tcomment: c.comment\n\t\t\t\t}\n\t\t\t})[0] : undefined,\n\t\t\tcontent: content.length > 0 ? content[0] : undefined,\n\t\t}\n\t},\n\n\tacceptRejectModuleContent: async () => {\n\t\tconsole.log('MC:', utils.markComplete, utils.activeModuleContent.activeModuleContent);\n\t\tawait patchModuleContent.run();\n\t\tawait this.getModules();\n\t\tthis.setActiveModuleContent(this.activeModuleContent.activeModuleContent);\n\t\tshowAlert('Module Content Updated!', 'success');\n\t},\n\n\tupdateModule: async () => {\n\t\tawait patchModule.run();\n\t\tawait this.getModules();\n\t\tshowAlert('Module Updated', 'success');\n\t\tcloseModal('mdl_addModule');\n\t},\n\n\taddModule: async () => {\n\t\tawait createModule.run();\n\t\tawait this.getModules();\n\t\tshowAlert('Module Created', 'success');\n\t\tcloseModal('mdl_addModule');\n\t},\n}",
+    "variables": [
+      {
+        "name": "activeModule",
+        "value": "{}"
+      },
+      {
+        "name": "activeModuleContent",
+        "value": "{}"
+      },
+      {
+        "name": "markComplete",
+        "value": "null"
+      }
+    ],
+    "userPermissions": []
+  },
+  "id": "Modules_utils",
+  "deleted": false,
+  "gitSyncId": "6461caf0d209002373fbd8c0_647db52a05d8736bde286058"
+}
