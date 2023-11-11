@@ -1,15 +1,15 @@
 {
   "pages": [
     {
-      "id": "Courses",
+      "id": "主页",
       "isDefault": true
     },
     {
-      "id": "Modules",
+      "id": "页1",
       "isDefault": false
     },
     {
-      "id": "Content",
+      "id": "页2",
       "isDefault": false
     }
   ],

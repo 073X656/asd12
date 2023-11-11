@@ -1,0 +1,25 @@
+{
+  "unpublishedCollection": {
+    "name": "utils",
+    "pageId": "主页",
+    "pluginId": "js-plugin",
+    "pluginType": "JS",
+    "actions": [],
+    "archivedActions": [],
+    "body": "export default {\n\n\tupdatedSubjectName: '',\n\tsubject: {},\n\n\tsetSubject: (subject) => {\n\t\tthis.subject = subject; \n\t},\n\n\tsetUpdatedSubjectName: (name) => {\n\t\tthis.updatedSubjectName = name; \n\t},\n\n\tinit: async () => {\n\t\tconst courseTypes = await fetchCourseType.run();\n\t\tconst courseLevels = await fetchCourseLevels.run();\n\n\t\tstoreValue('types', courseTypes);\n\t\tstoreValue('levels', courseLevels);\n\t},\n\n\tgetSubjects: async () => {\n\t\tconst subjects  = await fetchSubjects.run();\n\t\tconst adjustedSubjects = subjects.map(s => {\n\t\t\treturn {\n\t\t\t\tId: s.id,\n\t\t\t\tName: s.name,\n\t\t\t}\n\t\t});\n\n\t\tstoreValue('subjects', adjustedSubjects);\n\t},\n\n\n\n\tcreateSubject: async () => \t\t{\n\t\tawait createSubject.run({\n\t\t\tname: inp_subjectTitle.text\n\t\t});\n\n\t\tawait this.getSubjects();\n\t\tcloseModal('mdl_manageSubject');\n\t\tshowAlert('Subject Created!', 'success')\n\t},\n\n\tupdateSubjectName: async () => {\n\t\tawait patchSubjectName.run();\n\n\t\tawait this.getSubjects();\n\t\tcloseModal('mdl_manageSubject');\n\t\tshowAlert('Subject Updated', 'success');\n\t},\n\n\tgetCourseBySubject: async () => {\n\t\tconst courses = await fetchCoursesBySubject.run();\n\t\treturn courses.map(c => {\n\t\t\treturn {\n\t\t\t\tId: c.course_id,\n\t\t\t\tName: c.course_name,\n\t\t\t\tDuration: c.course_duration,\n\t\t\t\tDescription: c.course_description,\n\t\t\t\tImage: c.course_thumbnail_url,\n\t\t\t\tType: c.type_name,\n\t\t\t\tLevel: c.level_name,\n\t\t\t\tInstructor: c.course_instructor,\n\t\t\t\tLanguage: c.course_language,\n\t\t\t}\n\t\t})\n\t},\n\n\tupdateCourse: async () => {\n\n\t\tlet thumbnailUrl;\n\n\t\tif (fpk_uploadThumbnail.files.length > 0) {\n\t\t\tthumbnailUrl = await cloudinaryImageUpload.run({\n\t\t\t\tdata: fpk_uploadThumbnail.files[0].data,\n\t\t\t});\n\t\t} else {\n\t\t\tthumbnailUrl = img_thumbnail.image;\n\t\t}\n\n\t\tawait patchCourse.run({\n\t\t\tthumbnailUrl: thumbnailUrl.url\n\t\t});\n\n\n\t\tawait this.getCourseBySubject();\n\t\tcloseModal('mdl_handleCourse')\n\t\tshowAlert('Course Updated!', 'success');\n\t},\n\n\taddCourse: async () => {\n\n\t\tlet thumbnailUrl;\n\n\t\tif (fpk_uploadThumbnail.files.length > 0) {\n\t\t\tthumbnailUrl = await cloudinaryImageUpload.run({\n\t\t\t\tdata: fpk_uploadThumbnail.files[0].data,\n\t\t\t});\n\t\t} else {\n\t\t\tthumbnailUrl = null;\n\t\t}\n\n\t\tawait createCourse.run({\n\t\t\tthumbnailUrl: thumbnailUrl.url\n\t\t});\n\n\n\t\tawait this.getCourseBySubject();\n\t\tcloseModal('mdl_handleCourse')\n\t\tshowAlert('Course Created!', 'success');\n\t},\n}",
+    "variables": [
+      {
+        "name": "updatedSubjectName",
+        "value": "''"
+      },
+      {
+        "name": "subject",
+        "value": "{}"
+      }
+    ],
+    "userPermissions": []
+  },
+  "id": "主页_utils",
+  "deleted": false,
+  "gitSyncId": "6461caf0d209002373fbd8c0_646e4db31a94ce5f4b951029"
+}
